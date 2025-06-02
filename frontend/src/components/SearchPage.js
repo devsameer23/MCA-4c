@@ -134,28 +134,34 @@ const SearchPage = () => {
   }, [location.search]);
 
   const performSearch = (query) => {
-    // Simple test keywords for search function
-    if (query.toLowerCase().includes("wrong")) {
-      setSearchResult("🚨 High risk - Dangerous search detected");
-      setSearchResults([]);
-      return;
-    }
-
-    if (query.toLowerCase().includes("correct")) {
-      setSearchResult("✅ Low risk - Safe search query");
-      setSearchResults(securityTopics);
-      return;
-    }
-
     setSearchResult("");
     let results = securityTopics;
 
     if (query.trim()) {
       const searchTerm = query.toLowerCase();
+      
+      // Analyze the search query for potential risks
+      const riskyTerms = ["password", "urgent", "click here", "verify account", "suspend", "paypal-security", ".exe"];
+      const safeTerms = ["https", "official", "secure", "verification"];
+      
+      const hasRiskyTerms = riskyTerms.some(term => searchTerm.includes(term));
+      const hasSafeTerms = safeTerms.some(term => searchTerm.includes(term));
+      
+      if (hasRiskyTerms && !hasSafeTerms) {
+        setSearchResult("⚠️ Your search contains potentially risky terms. See relevant security topics below.");
+      } else if (hasSafeTerms) {
+        setSearchResult("✅ Good security awareness! Here are related topics:");
+      }
+      
+      // Filter topics based on search
       results = results.filter(item =>
         item.title.toLowerCase().includes(searchTerm) ||
         item.description.toLowerCase().includes(searchTerm) ||
-        item.tips.some(tip => tip.toLowerCase().includes(searchTerm))
+        item.tips.some(tip => tip.toLowerCase().includes(searchTerm)) ||
+        item.examples.some(example => 
+          example.content.toLowerCase().includes(searchTerm) ||
+          example.type.toLowerCase().includes(searchTerm)
+        )
       );
     }
 
