@@ -14,6 +14,17 @@ const Home = () => {
       return;
     }
 
+    // Simple test keywords
+    if (emailText.toLowerCase().includes("wrong")) {
+      setEmailResult("🚨 High risk - Suspicious content detected");
+      return;
+    }
+
+    if (emailText.toLowerCase().includes("correct")) {
+      setEmailResult("✅ Low risk - Content appears safe");
+      return;
+    }
+
     const phishingIndicators = [
       "urgent action required",
       "verify your account",
@@ -43,6 +54,17 @@ const Home = () => {
   const analyzeUrl = () => {
     if (!urlText.trim()) {
       setUrlResult("Please enter a URL to analyze");
+      return;
+    }
+
+    // Simple test keywords
+    if (urlText.toLowerCase().includes("wrong")) {
+      setUrlResult("🚨 High risk - Dangerous URL detected");
+      return;
+    }
+
+    if (urlText.toLowerCase().includes("correct")) {
+      setUrlResult("✅ Low risk - URL appears safe");
       return;
     }
 
@@ -86,7 +108,9 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto py-8 px-4">
         
-        <div className="text-center mb-8">
+        {/* Top Heading */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">AI CyberSecurity</h1>
           <p className="text-gray-600">Simple cybersecurity analysis tools</p>
         </div>
 
@@ -98,7 +122,7 @@ const Home = () => {
             <textarea
               value={emailText}
               onChange={(e) => setEmailText(e.target.value)}
-              placeholder="Paste email content here to check for phishing indicators..."
+              placeholder="Paste email content here to check for phishing indicators... (Try typing 'wrong' or 'correct' to test)"
               className="w-full h-32 p-3 border border-gray-300 rounded text-sm resize-none focus:outline-none focus:border-blue-500"
             />
             <button 
@@ -121,7 +145,7 @@ const Home = () => {
               type="text"
               value={urlText}
               onChange={(e) => setUrlText(e.target.value)}
-              placeholder="Enter URL to analyze (e.g., https://example.com)"
+              placeholder="Enter URL to analyze... (Try typing 'wrong' or 'correct' to test)"
               className="w-full p-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-500"
             />
             <button 

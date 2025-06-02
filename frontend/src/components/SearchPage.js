@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [searchResult, setSearchResult] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -55,6 +56,20 @@ const SearchPage = () => {
   }, [location.search]);
 
   const performSearch = (query) => {
+    // Simple test keywords for search function
+    if (query.toLowerCase().includes("wrong")) {
+      setSearchResult("🚨 High risk - Dangerous search detected");
+      setSearchResults([]);
+      return;
+    }
+
+    if (query.toLowerCase().includes("correct")) {
+      setSearchResult("✅ Low risk - Safe search query");
+      setSearchResults(securityTopics);
+      return;
+    }
+
+    setSearchResult("");
     let results = securityTopics;
 
     if (query.trim()) {
@@ -78,6 +93,11 @@ const SearchPage = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto py-8 px-4">
         
+        {/* Top Heading */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">AI CyberSecurity</h1>
+        </div>
+
         <div className="mb-8">
           <form onSubmit={handleSearch} className="max-w-md mx-auto">
             <div className="flex">
@@ -85,7 +105,7 @@ const SearchPage = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search security topics..."
+                placeholder="Search security topics... (Try 'wrong' or 'correct')"
                 className="flex-1 p-3 border border-gray-300 rounded-l text-sm focus:outline-none focus:border-blue-500"
               />
               <button
@@ -96,6 +116,12 @@ const SearchPage = () => {
               </button>
             </div>
           </form>
+          
+          {searchResult && (
+            <div className="max-w-md mx-auto mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-sm text-center">
+              {searchResult}
+            </div>
+          )}
           
           <p className="text-center text-sm text-gray-500 mt-4">
             {searchResults.length} topic{searchResults.length !== 1 ? 's' : ''} found
@@ -119,7 +145,7 @@ const SearchPage = () => {
           ))}
         </div>
 
-        {searchResults.length === 0 && (
+        {searchResults.length === 0 && !searchResult && (
           <div className="text-center py-12">
             <p className="text-gray-500 mb-4">No topics found</p>
             <button
