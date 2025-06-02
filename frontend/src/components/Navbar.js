@@ -5,34 +5,34 @@ const Navbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="bg-gray-800 border-b border-gray-700">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-white border-b border-gray-200">
+      <div className="max-w-4xl mx-auto px-4">
         <div className="flex justify-between h-12">
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0">
-              <span className="text-sm font-medium text-white">AI CyberSec</span>
+            <Link to="/" className="text-sm font-medium text-gray-800">
+              CyberTools
             </Link>
           </div>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
             <Link
               to="/"
-              className={`px-2 py-1 rounded text-sm transition-colors ${
+              className={`px-3 py-1 rounded text-sm transition-colors ${
                 location.pathname === "/"
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  ? "bg-blue-100 text-blue-600"
+                  : "text-gray-600 hover:text-gray-800"
               }`}
             >
-              Home
+              Tools
             </Link>
             <Link
               to="/search"
-              className={`px-2 py-1 rounded text-sm transition-colors ${
+              className={`px-3 py-1 rounded text-sm transition-colors ${
                 location.pathname === "/search"
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  ? "bg-blue-100 text-blue-600"
+                  : "text-gray-600 hover:text-gray-800"
               }`}
             >
-              Search
+              Topics
             </Link>
           </div>
         </div>

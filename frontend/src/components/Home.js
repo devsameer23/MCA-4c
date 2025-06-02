@@ -1,185 +1,171 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SearchBar from "./SearchBar";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [emailText, setEmailText] = useState("");
+  const [urlText, setUrlText] = useState("");
+  const [emailResult, setEmailResult] = useState("");
+  const [urlResult, setUrlResult] = useState("");
 
-  const handleSearch = (query) => {
-    navigate(`/search?q=${encodeURIComponent(query)}`);
+  const analyzeEmail = () => {
+    if (!emailText.trim()) {
+      setEmailResult("Please enter email content to analyze");
+      return;
+    }
+
+    const phishingIndicators = [
+      "urgent action required",
+      "verify your account",
+      "click here immediately",
+      "limited time offer",
+      "suspend your account",
+      "confirm your identity",
+      "unusual activity",
+      "expire today",
+      "act now",
+      "click this link"
+    ];
+
+    const suspiciousWords = phishingIndicators.filter(indicator => 
+      emailText.toLowerCase().includes(indicator.toLowerCase())
+    );
+
+    if (suspiciousWords.length === 0) {
+      setEmailResult("✅ Low risk - No common phishing indicators detected");
+    } else if (suspiciousWords.length <= 2) {
+      setEmailResult(`⚠️ Medium risk - Found ${suspiciousWords.length} phishing indicator(s): ${suspiciousWords.join(", ")}`);
+    } else {
+      setEmailResult(`🚨 High risk - Found ${suspiciousWords.length} phishing indicators: ${suspiciousWords.join(", ")}`);
+    }
   };
 
-  const threats = [
-    {
-      title: "AI-Powered Phishing",
-      description: "Sophisticated phishing attacks using AI to create highly personalized and convincing fraudulent emails, messages, and websites.",
-      icon: "🎯"
-    },
-    {
-      title: "Deepfake Technology",
-      description: "AI-generated fake videos, audio, and images used for social engineering, identity theft, and disinformation campaigns.",
-      icon: "🎭"
-    },
-    {
-      title: "Automated Malware",
-      description: "Self-evolving malware that uses machine learning to adapt its behavior and evade traditional security measures.",
-      icon: "🦠"
-    },
-    {
-      title: "AI-Driven Social Engineering",
-      description: "Advanced social engineering attacks that use AI to analyze social media and personal data for targeted manipulation.",
-      icon: "🧠"
+  const analyzeUrl = () => {
+    if (!urlText.trim()) {
+      setUrlResult("Please enter a URL to analyze");
+      return;
     }
-  ];
 
-  const defenses = [
-    {
-      title: "Behavioral Analysis",
-      description: "AI systems that monitor user behavior patterns to detect anomalies and potential security breaches in real-time.",
-      icon: "📊"
-    },
-    {
-      title: "Threat Intelligence",
-      description: "Machine learning algorithms that analyze global threat data to predict and prevent emerging cyber attacks.",
-      icon: "🛡️"
-    },
-    {
-      title: "Automated Response",
-      description: "AI-powered incident response systems that can automatically contain and neutralize threats without human intervention.",
-      icon: "⚡"
-    },
-    {
-      title: "Predictive Security",
-      description: "Advanced AI models that can forecast potential vulnerabilities and recommend proactive security measures.",
-      icon: "🔮"
+    try {
+      const url = new URL(urlText);
+      const risks = [];
+
+      // Check for suspicious patterns
+      if (!urlText.startsWith("https://")) {
+        risks.push("Not using HTTPS");
+      }
+
+      if (url.hostname.includes("bit.ly") || url.hostname.includes("tinyurl") || url.hostname.includes("t.co")) {
+        risks.push("Shortened URL");
+      }
+
+      if (/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(url.hostname)) {
+        risks.push("Uses IP address instead of domain");
+      }
+
+      const suspiciousDomains = ["secure-bank", "paypal-verify", "amazon-security", "microsoft-update"];
+      if (suspiciousDomains.some(domain => url.hostname.includes(domain))) {
+        risks.push("Suspicious domain name");
+      }
+
+      if (url.hostname.split('.').length > 3) {
+        risks.push("Complex subdomain structure");
+      }
+
+      if (risks.length === 0) {
+        setUrlResult("✅ Low risk - No obvious suspicious indicators");
+      } else {
+        setUrlResult(`⚠️ Potential risks found: ${risks.join(", ")}`);
+      }
+    } catch (error) {
+      setUrlResult("❌ Invalid URL format");
     }
-  ];
+  };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Simple intro */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-lg text-gray-300 mb-8">
-            Explore artificial intelligence in cybersecurity - from emerging threats to cutting-edge defense mechanisms.
-          </p>
-          <div className="max-w-2xl mx-auto mb-12">
-            <SearchBar onSearch={handleSearch} placeholder="Search cybersecurity topics..." />
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto py-8 px-4">
+        
+        <div className="text-center mb-8">
+          <p className="text-gray-600">Simple cybersecurity analysis tools</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* Email Phishing Analyzer */}
+          <div className="bg-white p-6 rounded border border-gray-200">
+            <div className="text-lg font-medium text-gray-800 mb-4">Email Phishing Detector</div>
+            <textarea
+              value={emailText}
+              onChange={(e) => setEmailText(e.target.value)}
+              placeholder="Paste email content here to check for phishing indicators..."
+              className="w-full h-32 p-3 border border-gray-300 rounded text-sm resize-none focus:outline-none focus:border-blue-500"
+            />
+            <button 
+              onClick={analyzeEmail}
+              className="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm"
+            >
+              Analyze Email
+            </button>
+            {emailResult && (
+              <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-sm">
+                {emailResult}
+              </div>
+            )}
+          </div>
+
+          {/* URL Analyzer */}
+          <div className="bg-white p-6 rounded border border-gray-200">
+            <div className="text-lg font-medium text-gray-800 mb-4">URL Safety Checker</div>
+            <input
+              type="text"
+              value={urlText}
+              onChange={(e) => setUrlText(e.target.value)}
+              placeholder="Enter URL to analyze (e.g., https://example.com)"
+              className="w-full p-3 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-500"
+            />
+            <button 
+              onClick={analyzeUrl}
+              className="mt-3 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm"
+            >
+              Check URL
+            </button>
+            {urlResult && (
+              <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-sm">
+                {urlResult}
+              </div>
+            )}
           </div>
         </div>
-      </section>
 
-      {/* Threats */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {threats.map((threat, index) => (
-              <div key={index} className="bg-gray-800 p-6 rounded-lg border border-red-900/30">
-                <div className="flex items-start space-x-3">
-                  <span className="text-xl">{threat.icon}</span>
-                  <div>
-                    <div className="text-sm font-medium text-red-400 mb-2">{threat.title}</div>
-                    <p className="text-sm text-gray-300">{threat.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+        {/* Simple Tips */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-4 rounded border border-gray-200 text-center">
+            <div className="text-2xl mb-2">🔍</div>
+            <div className="text-sm font-medium text-gray-700">Check sender</div>
+            <div className="text-xs text-gray-500 mt-1">Verify email addresses carefully</div>
+          </div>
+          <div className="bg-white p-4 rounded border border-gray-200 text-center">
+            <div className="text-2xl mb-2">🔗</div>
+            <div className="text-sm font-medium text-gray-700">Hover links</div>
+            <div className="text-xs text-gray-500 mt-1">Check where links actually go</div>
+          </div>
+          <div className="bg-white p-4 rounded border border-gray-200 text-center">
+            <div className="text-2xl mb-2">⏰</div>
+            <div className="text-sm font-medium text-gray-700">Don't rush</div>
+            <div className="text-xs text-gray-500 mt-1">Take time to think before clicking</div>
           </div>
         </div>
-      </section>
 
-      {/* Defenses */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {defenses.map((defense, index) => (
-              <div key={index} className="bg-gray-800 p-6 rounded-lg border border-green-900/30">
-                <div className="flex items-start space-x-3">
-                  <span className="text-xl">{defense.icon}</span>
-                  <div>
-                    <div className="text-sm font-medium text-green-400 mb-2">{defense.title}</div>
-                    <p className="text-sm text-gray-300">{defense.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Best practices */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gray-800 p-6 rounded-lg border border-blue-900/30">
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">🔒</span>
-                <div>
-                  <div className="text-sm font-medium text-blue-400 mb-2">Multi-Factor Authentication</div>
-                  <p className="text-sm text-gray-300">Implement robust MFA systems that can resist AI-powered authentication attacks.</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg border border-blue-900/30">
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">🔄</span>
-                <div>
-                  <div className="text-sm font-medium text-blue-400 mb-2">Continuous Monitoring</div>
-                  <p className="text-sm text-gray-300">Deploy AI-powered monitoring systems for real-time threat detection and response.</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg border border-blue-900/30">
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">📚</span>
-                <div>
-                  <div className="text-sm font-medium text-blue-400 mb-2">Security Training</div>
-                  <p className="text-sm text-gray-300">Regular training to help users identify AI-generated phishing and social engineering.</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg border border-blue-900/30">
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">🛡️</span>
-                <div>
-                  <div className="text-sm font-medium text-blue-400 mb-2">Zero Trust Architecture</div>
-                  <p className="text-sm text-gray-300">Implement zero trust principles with AI-enhanced verification for all network access.</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg border border-blue-900/30">
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">🔍</span>
-                <div>
-                  <div className="text-sm font-medium text-blue-400 mb-2">Regular Audits</div>
-                  <p className="text-sm text-gray-300">Use AI tools to continuously audit and assess security posture and vulnerabilities.</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg border border-blue-900/30">
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">⚡</span>
-                <div>
-                  <div className="text-sm font-medium text-blue-400 mb-2">Incident Response</div>
-                  <p className="text-sm text-gray-300">Develop AI-assisted incident response plans for rapid threat containment and recovery.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Simple call to action */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="text-center mt-8">
           <button 
             onClick={() => navigate('/search')}
-            className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded text-sm transition-colors"
+            className="text-blue-500 hover:text-blue-600 text-sm underline"
           >
-            Search topics
+            Search more security topics
           </button>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

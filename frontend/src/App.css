@@ -4,33 +4,25 @@
 
 .App {
   min-height: 100vh;
-  background-color: #111827;
+  background-color: #f9fafb;
 }
 
-/* Custom scrollbar */
+/* Clean scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
-}
-
-/* Line clamp utility */
-.line-clamp-3 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  background: #94a3b8;
 }
 
 /* Smooth transitions */
@@ -41,20 +33,8 @@
 /* Focus states */
 button:focus,
 input:focus,
+textarea:focus,
 a:focus {
-  outline: 2px solid #06b6d4;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
-}
-
-/* Hover animations */
-.hover-scale:hover {
-  transform: scale(1.05);
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #06b6d4, #3b82f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
