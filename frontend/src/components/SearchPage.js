@@ -212,18 +212,48 @@ const SearchPage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {searchResults.map((topic) => (
-            <div key={topic.id} className="bg-white p-4 rounded border border-gray-200">
-              <div className="font-medium text-gray-800 mb-2">{topic.title}</div>
-              <p className="text-sm text-gray-600 mb-3">{topic.description}</p>
-              <div className="space-y-1">
-                {topic.tips.map((tip, index) => (
-                  <div key={index} className="text-xs text-gray-500 flex items-start">
-                    <span className="text-green-500 mr-2">•</span>
-                    {tip}
-                  </div>
-                ))}
+            <div key={topic.id} className="bg-white p-6 rounded border border-gray-200">
+              <div className="font-medium text-gray-800 mb-2 flex items-center">
+                {topic.title}
+                <span className={`ml-2 px-2 py-1 text-xs rounded ${
+                  topic.riskLevel === 'high' ? 'bg-red-100 text-red-600' :
+                  topic.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-600' :
+                  'bg-green-100 text-green-600'
+                }`}>
+                  {topic.riskLevel} priority
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">{topic.description}</p>
+              
+              {/* Examples */}
+              <div className="mb-4">
+                <div className="text-sm font-medium text-gray-700 mb-2">Examples:</div>
+                <div className="space-y-2">
+                  {topic.examples.map((example, index) => (
+                    <div key={index} className="bg-gray-50 p-3 rounded border">
+                      <div className="text-xs font-medium text-gray-600 mb-1">{example.type}:</div>
+                      <div className="text-xs text-gray-700 mb-2 font-mono bg-white p-2 rounded border">
+                        "{example.content}"
+                      </div>
+                      <div className="text-xs">{example.risk}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tips */}
+              <div>
+                <div className="text-sm font-medium text-gray-700 mb-2">Security Tips:</div>
+                <div className="space-y-1">
+                  {topic.tips.map((tip, index) => (
+                    <div key={index} className="text-xs text-gray-500 flex items-start">
+                      <span className="text-blue-500 mr-2">•</span>
+                      {tip}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
