@@ -94,10 +94,10 @@ const SearchPage = () => {
   ];
 
   const categories = [
-    { value: "all", label: "All Topics" },
-    { value: "threats", label: "AI Threats" },
-    { value: "defenses", label: "AI Defenses" },
-    { value: "practices", label: "Best Practices" }
+    { value: "all", label: "All" },
+    { value: "threats", label: "Threats" },
+    { value: "defenses", label: "Defenses" },
+    { value: "practices", label: "Practices" }
   ];
 
   useEffect(() => {
@@ -149,73 +149,63 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Search Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="text-cyan-400">Search</span> Cybersecurity Topics
-          </h1>
-          <p className="text-gray-300 mb-6">
-            Find information about AI-driven threats, defense mechanisms, and best practices
-          </p>
-          <div className="max-w-2xl mx-auto">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Simple search header */}
+        <div className="mb-8">
+          <div className="max-w-2xl mx-auto mb-6">
             <SearchBar 
               onSearch={handleSearch} 
               initialValue={searchQuery}
               placeholder="Search threats, defenses, best practices..."
             />
           </div>
-        </div>
+          
+          {/* Category filters */}
+          <div className="flex justify-center gap-3 mb-6">
+            {categories.map((category) => (
+              <button
+                key={category.value}
+                onClick={() => handleCategoryChange(category.value)}
+                className={`px-3 py-1 rounded text-sm border transition-colors ${
+                  selectedCategory === category.value
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300"
+                }`}
+              >
+                {category.label}
+              </button>
+            ))}
+          </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          {categories.map((category) => (
-            <button
-              key={category.value}
-              onClick={() => handleCategoryChange(category.value)}
-              className={`px-4 py-2 rounded-lg border transition-colors ${
-                selectedCategory === category.value
-                  ? "bg-cyan-500 border-cyan-500 text-white"
-                  : "border-gray-600 text-gray-300 hover:border-cyan-400 hover:text-cyan-400"
-              }`}
-            >
-              {category.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Search Results */}
-        <div className="mb-6">
-          <p className="text-gray-400">
-            Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+          <p className="text-center text-sm text-gray-500">
+            {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
             {searchQuery && ` for "${searchQuery}"`}
           </p>
         </div>
 
-        {/* Results Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Results */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {searchResults.map((result) => (
-            <div key={result.id} className="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:border-cyan-400 transition-colors">
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-xl font-semibold text-white">{result.title}</h3>
+            <div key={result.id} className="bg-gray-800 border border-gray-700 rounded p-4 hover:border-gray-600 transition-colors">
+              <div className="flex items-start justify-between mb-2">
+                <div className="text-sm font-medium text-white">{result.title}</div>
                 <span className={`px-2 py-1 text-xs rounded border ${getCategoryColor(result.category)}`}>
                   {result.category}
                 </span>
               </div>
-              <p className="text-gray-300 mb-4 text-sm">{result.description}</p>
-              <p className="text-gray-400 text-sm mb-4 line-clamp-3">{result.content}</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="text-xs text-gray-400 mb-3 line-clamp-3">{result.description}</p>
+              <div className="flex flex-wrap gap-1">
                 {result.tags.slice(0, 3).map((tag, index) => (
                   <span 
                     key={index}
-                    className="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded"
+                    className="px-2 py-1 bg-gray-700 text-gray-400 text-xs rounded"
                   >
-                    #{tag}
+                    {tag}
                   </span>
                 ))}
                 {result.tags.length > 3 && (
-                  <span className="px-2 py-1 bg-gray-700 text-gray-400 text-xs rounded">
-                    +{result.tags.length - 3} more
+                  <span className="px-2 py-1 bg-gray-700 text-gray-500 text-xs rounded">
+                    +{result.tags.length - 3}
                   </span>
                 )}
               </div>
@@ -223,23 +213,19 @@ const SearchPage = () => {
           ))}
         </div>
 
-        {/* No Results */}
+        {/* No results */}
         {searchResults.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold mb-2">No results found</h3>
-            <p className="text-gray-400 mb-6">
-              Try adjusting your search terms or selecting a different category
-            </p>
+            <p className="text-gray-400 mb-4">No results found</p>
             <button
               onClick={() => {
                 setSearchQuery("");
                 setSelectedCategory("all");
                 navigate("/search");
               }}
-              className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm transition-colors"
             >
-              View All Topics
+              Show all
             </button>
           </div>
         )}
