@@ -14,41 +14,147 @@ const Home = () => {
       return;
     }
 
-    // Simple test keywords
-    if (emailText.toLowerCase().includes("wrong")) {
-      setEmailResult("🚨 High risk - Suspicious content detected");
-      return;
+    const text = emailText.toLowerCase();
+    let riskScore = 0;
+    let riskFactors = [];
+
+    // Advanced phishing detection patterns
+    const urgencyWords = ["urgent", "immediate", "expire", "suspend", "deadline", "act now", "limited time", "expires today"];
+    const threatWords = ["account suspended", "verify immediately", "confirm identity", "security alert", "unusual activity"];
+    const actionWords = ["click here", "click now", "verify account", "update payment", "confirm details", "sign in"];
+    const requestWords = ["provide password", "enter ssn", "social security", "credit card", "bank account", "routing number"];
+    const genericGreetings = ["dear customer", "dear user", "dear sir/madam", "valued customer", "account holder"];
+    
+    // Check for urgency indicators (high risk)
+    urgencyWords.forEach(word => {
+      if (text.includes(word)) {
+        riskScore += 25;
+        riskFactors.push(`Urgency language: "${word}"`);
+      }
+    });
+
+    // Check for threat language (high risk)
+    threatWords.forEach(phrase => {
+      if (text.includes(phrase)) {
+        riskScore += 30;
+        riskFactors.push(`Threat language: "${phrase}"`);
+      }
+    });
+
+    // Check for suspicious action requests (medium risk)
+    actionWords.forEach(phrase => {
+      if (text.includes(phrase)) {
+        riskScore += 20;
+        riskFactors.push(`Suspicious request: "${phrase}"`);
+      }
+    });
+
+    // Check for sensitive information requests (very high risk)
+    requestWords.forEach(phrase => {
+      if (text.includes(phrase)) {
+        riskScore += 40;
+        riskFactors.push(`Requests sensitive info: "${phrase}"`);
+      }
+    });
+
+    // Check for generic greetings (medium risk)
+    genericGreetings.forEach(greeting => {
+      if (text.includes(greeting)) {
+        riskScore += 15;
+        riskFactors.push(`Generic greeting: "${greeting}"`);
+      }
+    });
+
+    // Check for suspicious URLs
+    const urlPattern = /https?:\/\/[^\s]+/g;
+    const urls = emailText.match(urlPattern);
+    if (urls) {
+      urls.forEach(url => {
+        try {
+          const urlObj = new URL(url);
+          if (!url.startsWith("https://")) {
+            riskScore += 15;
+            riskFactors.push("Non-HTTPS link detected");
+          }
+          if (urlObj.hostname.includes("bit.ly") || urlObj.hostname.includes("tinyurl") || urlObj.hostname.includes("t.co")) {
+            riskScore += 25;
+            riskFactors.push("Shortened URL detected");
+          }
+          // Check for suspicious domain patterns
+          const suspiciousDomains = ["paypal-verify", "amazon-security", "microsoft-update", "google-security", "apple-support"];
+          if (suspiciousDomains.some(domain => urlObj.hostname.includes(domain))) {
+            riskScore += 35;
+            riskFactors.push(`Suspicious domain: ${urlObj.hostname}`);
+          }
+        } catch (e) {
+          riskScore += 10;
+          riskFactors.push("Malformed URL detected");
+        }
+      });
     }
 
-    if (emailText.toLowerCase().includes("correct")) {
-      setEmailResult("✅ Low risk - Content appears safe");
-      return;
+    // Check for spelling and grammar issues (basic)
+    const commonMisspellings = ["recieve", "occured", "seperate", "acommodate", "priviledge", "necesary"];
+    commonMisspellings.forEach(misspelling => {
+      if (text.includes(misspelling)) {
+        riskScore += 10;
+        riskFactors.push(`Spelling error: "${misspelling}"`);
+      }
+    });
+
+    // Check for excessive punctuation or caps
+    if (/[!]{2,}/.test(emailText) || /[?]{2,}/.test(emailText)) {
+      riskScore += 10;
+      riskFactors.push("Excessive punctuation detected");
     }
 
-    const phishingIndicators = [
-      "urgent action required",
-      "verify your account",
-      "click here immediately",
-      "limited time offer",
-      "suspend your account",
-      "confirm your identity",
-      "unusual activity",
-      "expire today",
-      "act now",
-      "click this link"
-    ];
+    const capsWords = emailText.match(/\b[A-Z]{3,}\b/g);
+    if (capsWords && capsWords.length > 2) {
+      riskScore += 15;
+      riskFactors.push("Excessive capital letters detected");
+    }
 
-    const suspiciousWords = phishingIndicators.filter(indicator => 
-      emailText.toLowerCase().includes(indicator.toLowerCase())
-    );
-
-    if (suspiciousWords.length === 0) {
-      setEmailResult("✅ Low risk - No common phishing indicators detected");
-    } else if (suspiciousWords.length <= 2) {
-      setEmailResult(`⚠️ Medium risk - Found ${suspiciousWords.length} phishing indicator(s): ${suspiciousWords.join(", ")}`);
+    // Determine risk level and provide detailed result
+    let riskLevel, riskColor, riskIcon;
+    if (riskScore >= 80) {
+      riskLevel = "VERY HIGH RISK";
+      riskColor = "text-red-600 bg-red-50";
+      riskIcon = "🚨";
+    } else if (riskScore >= 50) {
+      riskLevel = "HIGH RISK";
+      riskColor = "text-red-600 bg-red-50";
+      riskIcon = "🚨";
+    } else if (riskScore >= 25) {
+      riskLevel = "MEDIUM RISK";
+      riskColor = "text-yellow-600 bg-yellow-50";
+      riskIcon = "⚠️";
+    } else if (riskScore >= 10) {
+      riskLevel = "LOW RISK";
+      riskColor = "text-blue-600 bg-blue-50";
+      riskIcon = "ℹ️";
     } else {
-      setEmailResult(`🚨 High risk - Found ${suspiciousWords.length} phishing indicators: ${suspiciousWords.join(", ")}`);
+      riskLevel = "VERY LOW RISK";
+      riskColor = "text-green-600 bg-green-50";
+      riskIcon = "✅";
     }
+
+    let result = `${riskIcon} ${riskLevel} (Score: ${riskScore}/100)\n\n`;
+    
+    if (riskFactors.length > 0) {
+      result += `Risk factors detected:\n${riskFactors.map(factor => `• ${factor}`).join('\n')}`;
+    } else {
+      result += "No suspicious indicators detected. Email appears legitimate.";
+    }
+
+    if (riskScore >= 50) {
+      result += "\n\n⚠️ Recommendation: DO NOT interact with this email. Delete it immediately.";
+    } else if (riskScore >= 25) {
+      result += "\n\n⚠️ Recommendation: Exercise caution. Verify sender through official channels before taking action.";
+    } else {
+      result += "\n\n✅ Recommendation: Email appears safe, but always remain vigilant.";
+    }
+
+    setEmailResult(result);
   };
 
   const analyzeUrl = () => {
