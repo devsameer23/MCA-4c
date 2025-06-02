@@ -239,7 +239,7 @@ const Home = () => {
             </button>
             {emailResult && (
               <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-sm">
-                {emailResult}
+                <pre className="whitespace-pre-wrap font-sans">{emailResult}</pre>
               </div>
             )}
           </div>
