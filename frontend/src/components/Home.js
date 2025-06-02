@@ -228,7 +228,7 @@ const Home = () => {
             <textarea
               value={emailText}
               onChange={(e) => setEmailText(e.target.value)}
-              placeholder="Paste email content here to check for phishing indicators... (Try typing 'wrong' or 'correct' to test)"
+              placeholder="Paste email content here for advanced phishing analysis... (analyzes urgency, threats, suspicious links, grammar, etc.)"
               className="w-full h-32 p-3 border border-gray-300 rounded text-sm resize-none focus:outline-none focus:border-blue-500"
             />
             <button 
