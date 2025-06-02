@@ -189,7 +189,7 @@ const SearchPage = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search security topics... (Try 'wrong' or 'correct')"
+                placeholder="Search security topics... (Try 'phishing', 'password', 'https')"
                 className="flex-1 p-3 border border-gray-300 rounded-l text-sm focus:outline-none focus:border-blue-500"
               />
               <button
