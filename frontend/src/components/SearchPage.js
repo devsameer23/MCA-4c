@@ -8,43 +8,121 @@ const SearchPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Simple security topics
+  // Cybersecurity topics with examples
   const securityTopics = [
     {
       id: 1,
-      title: "Phishing Emails",
-      description: "How to identify and avoid fraudulent emails that try to steal your information.",
-      tips: ["Check sender address", "Look for urgent language", "Verify links before clicking"]
+      title: "Email Phishing Detection",
+      description: "Learn to identify suspicious emails that try to steal your credentials or personal information.",
+      riskLevel: "high",
+      examples: [
+        {
+          type: "Suspicious Email",
+          content: "URGENT: Your account will be suspended! Click here to verify immediately.",
+          risk: "🚨 High Risk - Urgent language and suspicious links"
+        },
+        {
+          type: "Safe Email", 
+          content: "Thank you for your recent purchase. Your order confirmation is attached.",
+          risk: "✅ Low Risk - Normal business communication"
+        }
+      ],
+      tips: ["Check sender email carefully", "Look for urgent/threatening language", "Hover over links before clicking", "Verify with company directly"]
     },
     {
       id: 2,
-      title: "Safe Browsing",
-      description: "Best practices for secure web browsing and avoiding malicious websites.",
-      tips: ["Use HTTPS sites", "Keep browser updated", "Be careful with downloads"]
+      title: "URL Safety Checking",
+      description: "Analyze URLs to detect potentially malicious or suspicious websites before visiting them.",
+      riskLevel: "medium",
+      examples: [
+        {
+          type: "Suspicious URL",
+          content: "http://paypal-security-update.malicious-site.com/login",
+          risk: "🚨 High Risk - Fake domain mimicking PayPal"
+        },
+        {
+          type: "Safe URL",
+          content: "https://www.paypal.com/signin",
+          risk: "✅ Low Risk - Official PayPal website with HTTPS"
+        }
+      ],
+      tips: ["Check for HTTPS encryption", "Verify domain spelling", "Avoid shortened links", "Look for official domains"]
     },
     {
       id: 3,
       title: "Password Security",
-      description: "Creating and managing strong passwords to protect your accounts.",
-      tips: ["Use unique passwords", "Enable 2FA when possible", "Use password managers"]
+      description: "Create strong passwords and manage them securely to protect your accounts.",
+      riskLevel: "high",
+      examples: [
+        {
+          type: "Weak Password",
+          content: "password123",
+          risk: "🚨 High Risk - Common, easily guessed password"
+        },
+        {
+          type: "Strong Password",
+          content: "Tr@il2024!Mountain#",
+          risk: "✅ Low Risk - Complex with numbers, symbols, capitals"
+        }
+      ],
+      tips: ["Use 12+ characters", "Mix letters, numbers, symbols", "Unique for each account", "Use password manager"]
     },
     {
       id: 4,
-      title: "Software Updates",
-      description: "Why keeping your software updated is crucial for security.",
-      tips: ["Enable automatic updates", "Update regularly", "Use official sources"]
+      title: "Suspicious File Downloads",
+      description: "Identify potentially dangerous file attachments and downloads.",
+      riskLevel: "high",
+      examples: [
+        {
+          type: "Dangerous File",
+          content: "invoice.pdf.exe",
+          risk: "🚨 High Risk - Executable file disguised as PDF"
+        },
+        {
+          type: "Safe File",
+          content: "report.pdf from trusted-company.com",
+          risk: "✅ Low Risk - PDF from verified source"
+        }
+      ],
+      tips: ["Check file extensions carefully", "Scan with antivirus", "Verify sender", "Avoid .exe from email"]
     },
     {
       id: 5,
-      title: "Wi-Fi Security",
-      description: "How to stay safe when using public or home wireless networks.",
-      tips: ["Avoid public Wi-Fi for sensitive tasks", "Use VPN when needed", "Secure home router"]
+      title: "Social Engineering Tactics",
+      description: "Recognize manipulation techniques used by cybercriminals to trick people.",
+      riskLevel: "medium",
+      examples: [
+        {
+          type: "Social Engineering",
+          content: "Hi, this is IT support. I need your password to fix your computer remotely.",
+          risk: "🚨 High Risk - Impersonation and password request"
+        },
+        {
+          type: "Legitimate Request",
+          content: "Please submit a help desk ticket at support.company.com for IT assistance.",
+          risk: "✅ Low Risk - Proper IT support process"
+        }
+      ],
+      tips: ["Verify identity independently", "Never give passwords over phone", "Use official channels", "Trust your instincts"]
     },
     {
       id: 6,
-      title: "Social Media Safety",
-      description: "Protecting your privacy and security on social media platforms.",
-      tips: ["Review privacy settings", "Think before posting", "Be careful with friend requests"]
+      title: "Wi-Fi Network Security",
+      description: "Stay safe when connecting to wireless networks, especially public ones.",
+      riskLevel: "medium",
+      examples: [
+        {
+          type: "Risky Network",
+          content: "Free_WiFi_No_Password (Open network at coffee shop)",
+          risk: "⚠️ Medium Risk - Unencrypted public network"
+        },
+        {
+          type: "Secure Network",
+          content: "CoffeeShop_Guest_5G (WPA3 protected with password)",
+          risk: "✅ Low Risk - Password-protected network"
+        }
+      ],
+      tips: ["Use VPN on public WiFi", "Prefer password-protected networks", "Avoid sensitive tasks on public WiFi", "Use mobile hotspot when possible"]
     }
   ];
 
